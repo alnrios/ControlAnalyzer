@@ -20,7 +20,6 @@ def control_avg_function(control_dict, cell_line_dict_ID):
                         if control_list_length > 1:
                             control_list_length = control_list_length - 1
                         for i in range(control_list_length):
-                            # print('{0}: {1}'.format(d1_dict[tech][barcode][i], results_var[i]))
                             cell_lines.append('{0}: {1}'.format(control_dict[tech][day][barcode][i], str(results_var[i])))
                             ctrl_avg_dict[cell_line_dict_ID][control_dict[tech][day][barcode][i]] = str(results_var[i])
 
