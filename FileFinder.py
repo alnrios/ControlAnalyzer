@@ -15,13 +15,16 @@ def control_avg_function(control_dict, cell_line_dict_ID):
                     if barcode in result_sheet:
                         results_var = average_controls(extract_csv_data('results/{}'.format(result_sheet)))
                         control_list_length = len(control_dict[tech][day][barcode])
-                        """ The below if statement is necessary bc if the list is only 1 cell line, then the range below 
-                            that needs to be at least 1 in length. So it is purely for indexing purposes"""
-                        if control_list_length > 1:
-                            control_list_length = control_list_length - 1
-                        for i in range(control_list_length):
-                            cell_lines.append('{0}: {1}'.format(control_dict[tech][day][barcode][i], str(results_var[i])))
-                            ctrl_avg_dict[cell_line_dict_ID][control_dict[tech][day][barcode][i]] = str(results_var[i])
+                        if control_list_length > len(results_var):
+                            print("Error processing all cell lines in " + barcode + "... Check CSV file")
+                            for i in range(len(results_var)):
+                                cell_lines.append('{0}: {1}'.format(control_dict[tech][day][barcode][i], str(results_var[i])))
+                                ctrl_avg_dict[cell_line_dict_ID][control_dict[tech][day][barcode][i]] = str(results_var[i])
+
+                        else:
+                            for i in range(control_list_length):
+                                cell_lines.append('{0}: {1}'.format(control_dict[tech][day][barcode][i], str(results_var[i])))
+                                ctrl_avg_dict[cell_line_dict_ID][control_dict[tech][day][barcode][i]] = str(results_var[i])
 
 
 def create_excel_file():
@@ -36,7 +39,7 @@ def create_excel_file():
     sheet['E1'].value = 'D7 AVG'
     sheet['F1'].value = 'Difference (D7 - D1)'
     sheet['G1'].value = 'Increase Factor'
-    wb.save('AvgControlSheet.xlsx')
+    wb.save('CtrlAvg.xlsx')
 
 
 def write_excel_file(file, control_dict, average_dict):
@@ -80,9 +83,10 @@ def write_to_file(file, control_dict1, average_dict):
             file.write('**')
             file.write('\n')
             for date in control_dict1[tech]:
-                file.write(date)
+                file.write(str(date))
                 file.write('\n')
                 for barcode in control_dict1[tech][date]:
+                    file.write("-----" + barcode + "-----\n")
                     for line in control_dict1[tech][date][barcode]:
                         if line in average_dict['Day1'] and line in average_dict['Day7']:
                             file.write(str(line))
@@ -100,12 +104,11 @@ ctrl_avg_dict = {'Day1': {}, 'Day7': {}}
 
 control_avg_function(d1_dict, 'Day1')
 control_avg_function(d7_dict, 'Day7')
-
 write_to_file('controlResults.txt', d1_dict, ctrl_avg_dict)
 
 create_excel_file()
 
-missing_bars = write_excel_file('AvgControlSheet.xlsx', d1_dict, ctrl_avg_dict)
+missing_bars = write_excel_file('CtrlAvg.xlsx', d1_dict, ctrl_avg_dict)
 
 if missing_bars > 0:
     print('\n{} barcodes were not found and could not be processed'.format(missing_bars))
