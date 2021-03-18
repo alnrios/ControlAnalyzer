@@ -35,6 +35,12 @@ def create_control_dict(control_index, control_dict):
                 column_break = 0
                 spreadsheet_in_list.append(spreadsheet_lines)
                 spreadsheet_lines = []
+                break   # added on 3/17/2021
+            """
+            The above break was added because the program, for some reason, wasn't skipping to the next line in
+            the spreadsheet and was picking it up where it left off from the previous row. This was causing the lists
+            to become disoriented and couldn't progress.
+            """
 
     """
     This next for loop takes the above list we created and assigns the necessary values into the dictionary that we
@@ -100,11 +106,4 @@ for tech in tech_list:
 create_control_dict(d1_num, d1_dict)
 create_control_dict(d7_num, d7_dict)
 
-
-# for name in d1_dict:
-#     for barcode in d1_dict[name]:
-#         print(name + ' - ' + barcode)
-#         cell_line_counter = 1
-#         for cell_line in d1_dict[name][barcode]:
-#             print('Cell Line {0}: {1}'.format(cell_line_counter, cell_line))
-#             cell_line_counter += 1
+print(str(len(d1_list)) + " control plates being processed")
